@@ -96,17 +96,20 @@ class Game extends React.Component {
 				'Go to game start';
 			return (
 				<li key={move}>
-					<button onClick={() => this.jumpTo(move)}>{desc}</button>
+					<button 
+						onClick={() => this.jumpTo(move)}
+            			onMouseEnter={(el) => el.target.style.fontWeight = 'bold'}
+            			onMouseLeave={(el) => el.target.style.fontWeight = ''}
+					>
+						{desc}
+					</button>
 				</li>
 			);
 		});
 
-		let status;
-		if (winner) {
-			status = "Winner: " + winner;
-		} else {
-			status = "Next player: " + (this.state.xIsNext ? "X" : "O");
-		}
+		const status = winner ?
+			"Winner: " + winner :
+			"Next player: " + (this.state.xIsNext ? "X" : "O");
 
 		return (
 			<div className="game">
