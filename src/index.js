@@ -11,36 +11,33 @@ function Square(props) {
 }
 
 class Board extends React.Component {
-	renderSquare(i) {
-		return (
-			<Square
-				value={this.props.squares[i]}
-				onClick={() => this.props.onClick(i)}
-			/>
-		);
-	}
+  renderSquare(i) {
+    return (
+      <Square
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
+      />
+    );
+  }
 
-	render() {
-		return (
-			<div>
-				<div className="board-row">
-					{this.renderSquare(0)}
-					{this.renderSquare(1)}
-					{this.renderSquare(2)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(3)}
-					{this.renderSquare(4)}
-					{this.renderSquare(5)}
-				</div>
-				<div className="board-row">
-					{this.renderSquare(6)}
-					{this.renderSquare(7)}
-					{this.renderSquare(8)}
-				</div>
-			</div>
-		);
-	}
+  render() {
+    return (
+      <div>
+        {/* Creates an array of 3 divs and cycles through them */}
+        {Array(3).fill().map((rowValue, rowIndex) =>
+            <div className="board-row" key={"row_" + rowIndex}>
+              {/* Creates an array of 3 spans and cycles through them to
+                render a square of the specified value*/}
+              {Array(3).fill().map((colValue, colIndex) =>
+                <span id={"row_" + (colIndex+1) + "_col_" + (rowIndex+1)} key={"row_" + rowIndex + "_col_" + colIndex}>
+                  {this.renderSquare(3 * (rowIndex % 3) + colIndex)}
+                </span>
+              )}
+            </div>
+        )}
+      </div>
+    );
+  }
 }
 
 class Game extends React.Component {
