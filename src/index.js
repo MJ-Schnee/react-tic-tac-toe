@@ -47,13 +47,12 @@ class Game extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			history: [
-				{
-					squares: Array(9).fill(null)
-				}
-			],
+			history: [{
+				squares: Array(9).fill()
+			}],
 			stepNumber: 0,
-			xIsNext: true
+			xIsNext: true,
+			moves: [],
 		};
 	}
 
@@ -61,18 +60,20 @@ class Game extends React.Component {
 		const history = this.state.history.slice(0, this.state.stepNumber + 1);
 		const current = history[history.length - 1];
 		const squares = current.squares.slice();
+		const moves = this.state.moves.slice(0, this.state.stepNumber);
+	
 		if (calculateWinner(squares) || squares[i]) {
 			return;
 		}
+
 		squares[i] = this.state.xIsNext ? "X" : "O";
 		this.setState({
-			history: history.concat([
-				{
-					squares: squares
-				}
-			]),
+			history: history.concat([{
+				squares: squares
+			}]),
 			stepNumber: history.length,
-			xIsNext: !this.state.xIsNext
+			xIsNext: !this.state.xIsNext,
+      		moves: moves.concat(calculateSquareCoord(i)),
 		});
 	}
 
@@ -87,10 +88,11 @@ class Game extends React.Component {
 		const history = this.state.history;
 		const current = history[this.state.stepNumber];
 		const winner = calculateWinner(current.squares);
+    	const moves = this.state.moves;
 
-		const moves = history.map((step, move) => {
-			const desc = move ?
-				'Go to move #' + move :
+		const movesList = history.map((step, move) => {
+			const desc = move ? 
+				'Go to move #' + move + ' : ' + moves[move - 1] :
 				'Go to game start';
 			return (
 				<li key={move}>
@@ -116,16 +118,12 @@ class Game extends React.Component {
 				</div>
 				<div className="game-info">
 					<div>{status}</div>
-					<ol>{moves}</ol>
+					<ol>{movesList}</ol>
 				</div>
 			</div>
 		);
 	}
 }
-
-// ========================================
-
-ReactDOM.render(<Game />, document.getElementById("root"));
 
 function calculateWinner(squares) {
 	const lines = [
@@ -146,3 +144,19 @@ function calculateWinner(squares) {
 	}
 	return null;
 }
+
+/**
+ * Calculates the "(col, row)" of a square
+ * @param {*} square Given index of a square according to the game board
+ */
+function calculateSquareCoord(square) {
+  const col = (square % 3) + 1;
+  const row = (Math.floor(square / 3)) + 1;
+  // Fun fact: in trying to discover how to calculate the rows
+  //   I learned that (X - (X % Y)) % Y will always equal 0
+  return `(${col}, ${row})`;
+}
+
+// ========================================
+
+ReactDOM.render(<Game />, document.getElementById("root"));
